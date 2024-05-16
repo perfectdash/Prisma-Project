@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+
+// 1. not able to connect to neon db =>use local
+// 2. url is incorrect 
+// 3. old database that need to be override ,when command is ejected
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = "fuck"
+}
+
+model StockList{
+  id     Int     @id @default(autoincrement())
+  ticker String  @unique
+  name   String
+  stocks Stock[]
+
+  @@index([ticker], name: "idx_StockList_ticker")
+}
+
+model Stock{
+  id       Int       @id @default(autoincrement())
+  ticker   Int       @map("stock_id")
+  time     DateTime 
+  low      Float
+  high     Float
+  open     Float
+  close    Float
+  volume   Float?
+  articles  ArticleData[]
+  stockList StockList @relation(fields: [ticker], references: [id])
+}
+
+
+model ArticleData {
+  id          Int        @id @default(autoincrement())
+  url         String
+  date        DateTime
+  time        String
+  title       String
+  ticker      String
+  articleText String
+  summary     String
+  image       String
+  stockDataId Int
+  stockList   StockList  @relation(fields: [stockDataId], references: [id])
+}
+
+
+
+// // modelling our data in the prisma schema
+// model User {
+//   id        Int   @id @default(autoincrement())
+//   email     String   @unique
+//   firstname String?
+//   lastname  String?
+//   password  String
+// }
+
+
+
+// // try to add phone number and making it must 
+// // will led to error if the default is not provided 
+// // as it will be an integerity issue 
+
+
+// model Todo { 
+//    id       Int      @id @default(autoincrement())
+//    title    String
+//    done     Boolean  @default(false)
+//    description String?
+//    userId  Int
+// }
